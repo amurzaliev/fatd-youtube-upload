@@ -12,6 +12,7 @@ use Google_Service_YouTube_VideoSnippet;
 class Uploader
 {
     const DATA = __DIR__ . '/../data.json';
+    const TMP_PATH = __DIR__ . '/../tmp/';
     const UPLOAD_LIMIT = 2;
 
     /** @var Google_Client */
@@ -42,7 +43,7 @@ class Uploader
                     $videoPathAWS = "https://s3.amazonaws.com/jw-video-migrate/{$videoData['s3_bucket']}/{$videoData['media_id']}.mp4";
                 }
 
-                $videoPath = "./../tmp/{$videoData['media_id']}.mp4";
+                $videoPath = self::TMP_PATH . "{$videoData['media_id']}.mp4";
 
                 if (!file_exists($videoPath)) {
                     copy($videoPathAWS, $videoPath);
