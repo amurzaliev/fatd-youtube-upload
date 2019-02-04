@@ -1,0 +1,19 @@
+{
+  "name": "fatd/youtube_uploader",
+  "description": "Findatopdoc Youtube Uploader",
+  "authors": [
+    {
+      "name": "Adilet Murzaliev",
+      "email": "murzaliev@sibers.com"
+    }
+  ],
+  "require": {
+    "google/apiclient": "^2.0",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}

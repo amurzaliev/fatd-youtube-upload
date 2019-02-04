@@ -1,0 +1,6 @@
+.idea/
+/vendor
+
+access_token.json
+client_secret.json
+data.json
