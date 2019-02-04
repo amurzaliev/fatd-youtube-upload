@@ -12,7 +12,7 @@ use Google_Service_YouTube_VideoSnippet;
 class Uploader
 {
     const DATA = './../data.json';
-    const UPLOAD_LIMIT = 1;
+    const UPLOAD_LIMIT = 2;
 
     /** @var Google_Client */
     private $googleClient;
@@ -81,7 +81,7 @@ class Uploader
             $snippet->setCategoryId(22);
 
             $status = new Google_Service_YouTube_VideoStatus();
-            $status->privacyStatus = "private";
+            $status->privacyStatus = "unlisted";
 
             $video = new Google_Service_YouTube_Video();
             $video->setSnippet($snippet);
