@@ -11,7 +11,7 @@ use Google_Service_YouTube_VideoSnippet;
 
 class Uploader
 {
-    const DATA = './../data.json';
+    const DATA = __DIR__ . '/../data.json';
     const UPLOAD_LIMIT = 2;
 
     /** @var Google_Client */

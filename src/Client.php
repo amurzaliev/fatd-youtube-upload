@@ -7,8 +7,8 @@ use Google_Service_YouTube;
 
 class Client
 {
-    const CLIENT_SECRET = './../client_secret.json';
-    const ACCESS_TOKEN = './../access_token.json';
+    const CLIENT_SECRET = __DIR__ . '/../client_secret.json';
+    const ACCESS_TOKEN = __DIR__ . '/../access_token.json';
 
     /** @var Google_Client */
     private $googleClient;
