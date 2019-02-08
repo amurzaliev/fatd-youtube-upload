@@ -64,7 +64,7 @@ class Uploader
                 if ($result['success']) {
                     $this->data[$id]['youtube_id'] = $result['youtube_id'];
                     echo "{$videoData['media_id']} is downloaded with youtube_id: {$result['youtube_id']}\n";
-                    $this->logger->info("{$videoData['media_id']} is downloaded with youtube_id: {$result['youtube_id']}\n");
+                    $this->logger->info("{$videoData['media_id']} is downloaded with youtube_id: {$result['youtube_id']} (count: {$limit})\n");
                     file_put_contents(self::DATA, json_encode($this->data, JSON_PRETTY_PRINT));
                 }
 
