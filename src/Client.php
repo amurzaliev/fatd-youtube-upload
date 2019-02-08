@@ -4,6 +4,7 @@ namespace App;
 
 use Google_Client;
 use Google_Service_YouTube;
+use Psr\Log\LoggerInterface;
 
 class Client
 {
@@ -16,7 +17,10 @@ class Client
     /** @var string */
     private $accessToken;
 
-    public function __construct(Google_Client $googleClient)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(Google_Client $googleClient, LoggerInterface $logger)
     {
         $this->googleClient = $googleClient;
         $this->googleClient->setApplicationName('API Youtube Uploader');
@@ -28,6 +32,8 @@ class Client
             $this->accessToken = json_decode(file_get_contents(self::ACCESS_TOKEN), true);
             $this->googleClient->setAccessToken($this->accessToken);
         }
+
+        $this->logger = $logger;
     }
 
     public function getAccessToken()
@@ -40,7 +46,9 @@ class Client
             $this->accessToken = $this->googleClient->fetchAccessTokenWithAuthCode($authCode);
 
             file_put_contents(self::ACCESS_TOKEN, json_encode($this->accessToken));
-            printf("Credentials saved to %s\n", self::ACCESS_TOKEN);
+            $message = "Credentials saved to " . self::ACCESS_TOKEN . "\n";
+            echo $message;
+            $this->logger->info($message);
         }
 
         $this->googleClient->setAccessToken($this->accessToken);
@@ -51,9 +59,13 @@ class Client
         if ($this->googleClient->isAccessTokenExpired()) {
             $this->googleClient->fetchAccessTokenWithRefreshToken($this->googleClient->getRefreshToken());
             file_put_contents(self::ACCESS_TOKEN, json_encode($this->googleClient->getAccessToken()));
-            return "Credentials is refreshed to" . self::ACCESS_TOKEN . "\n";
+            $message = "Credentials is refreshed to" . self::ACCESS_TOKEN . "\n";
+            $this->logger->info($message);
+            return $message;
         }
 
+        $message = "Access token is fresh";
+        $this->logger->info($message);
         return "Access token is fresh";
     }
 

@@ -8,12 +8,15 @@ use Google_Http_MediaFileUpload;
 use Google_Service_YouTube_Video;
 use Google_Service_YouTube_VideoStatus;
 use Google_Service_YouTube_VideoSnippet;
+use Psr\Log\LoggerInterface;
 
 class Uploader
 {
     const DATA = __DIR__ . '/../data.json';
     const TMP_PATH = __DIR__ . '/../tmp/';
-    const UPLOAD_LIMIT = 2;
+
+    /** @var int */
+    private $uploadLimit;
 
     /** @var Google_Client */
     private $googleClient;
@@ -24,18 +27,23 @@ class Uploader
     /** @var array */
     private $data;
 
-    public function __construct(Client $client)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(Client $client, LoggerInterface $logger, array $params)
     {
         $this->googleClient = $client->getGoogleClient();
         $this->youtubeService = new Google_Service_YouTube($this->googleClient);
         $this->data = json_decode(file_get_contents(self::DATA), true);
+        $this->logger = $logger;
+        $this->uploadLimit = $params['upload_limit'];
     }
 
     public function uploadVideos()
     {
         $limit = 1;
         foreach ($this->data as $id => $videoData) {
-            if (null === $videoData['youtube_id'] && $limit <= self::UPLOAD_LIMIT) {
+            if (null === $videoData['youtube_id'] && $limit <= $this->uploadLimit) {
 
                 if (null !== $videoData['s3_bucket_fullhd']) {
                     $videoPathAWS = "https://s3.amazonaws.com/jw-video-migrate/{$videoData['s3_bucket_fullhd']}/{$videoData['media_id']}.mp4";
@@ -56,15 +64,18 @@ class Uploader
                 if ($result['success']) {
                     $this->data[$id]['youtube_id'] = $result['youtube_id'];
                     echo "{$videoData['media_id']} is downloaded with youtube_id: {$result['youtube_id']}\n";
+                    $this->logger->info("{$videoData['media_id']} is downloaded with youtube_id: {$result['youtube_id']}\n");
                     file_put_contents(self::DATA, json_encode($this->data, JSON_PRETTY_PRINT));
                 }
 
                 if (!$result['success'] && !$result['quota_error']) {
                     echo "Error while uploading: {$videoData['media_id']}\n";
+                    $this->logger->error("Error while uploading: {$videoData['media_id']}\n");
                 }
 
                 if (!$result['success'] && $result['quota_error']) {
                     echo "The request cannot be completed because you have exceeded your quota.\n";
+                    $this->logger->error("The request cannot be completed because you have exceeded your quota.\n");
                     break;
                 }
 

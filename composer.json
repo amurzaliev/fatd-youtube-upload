@@ -9,7 +9,8 @@
   ],
   "require": {
     "google/apiclient": "^2.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "monolog/monolog": "^1.24"
   },
   "autoload": {
     "psr-4": {
